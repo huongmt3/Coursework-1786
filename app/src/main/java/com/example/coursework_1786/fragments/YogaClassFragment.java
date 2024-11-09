@@ -1,4 +1,4 @@
-package com.example.coursework_1786.Fragments;
+package com.example.coursework_1786.fragments;
 
 import android.os.Bundle;
 
