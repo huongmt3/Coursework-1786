@@ -55,9 +55,9 @@ public class YogaCourseFragment extends Fragment {
         recyclerView = view.findViewById(R.id.yogaCourseRc);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        List<YogaCourse> yogaCourses = yogaDatabase.yogaCourseDao().getAllYogaCourses();
+        List<YogaCourse> yogaCourses = yogaDatabase.yogaCourseDao().getAll();
 
-        adapter = new YogaCourseAdapter(yogaCourses);
+        adapter = new YogaCourseAdapter(yogaCourses, requireContext());
         recyclerView.setAdapter(adapter);
 
         return view;

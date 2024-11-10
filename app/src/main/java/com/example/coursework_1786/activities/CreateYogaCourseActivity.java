@@ -38,7 +38,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_create_course);
+        setContentView(R.layout.activity_create_yoga_course);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.labelTimeOfCourse), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -89,16 +89,16 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         Spinner dayOfTheWeeksSpinner = findViewById(R.id.spinnerDayOfTheWeek);
         String selectedDay = dayOfTheWeeksSpinner.getSelectedItem().toString();
         String timeOfCourse = ((TextView) findViewById(R.id.labelDisplayTime)).getText().toString();
-        String capacityText = ((EditText) findViewById(R.id.textCapacity)).getText().toString();
-        String duration = ((TextView) findViewById(R.id.textDuration)).getText().toString();
-        String pricePerClass = ((TextView) findViewById(R.id.textPricePerClass)).getText().toString();
+        String capacityText = ((EditText) findViewById(R.id.textCapacity)).getText().toString().trim();
+        String duration = ((TextView) findViewById(R.id.textDuration)).getText().toString().trim();
+        String pricePerClass = ((TextView) findViewById(R.id.textPricePerClass)).getText().toString().trim();
         RadioGroup typeOfClassRadio = findViewById(R.id.radioTypeOfClass);
         String description = ((TextView) findViewById(R.id.textDescription)).getText().toString();
 
         int selectedTypeOfClass = typeOfClassRadio.getCheckedRadioButtonId();
 
-        if (selectedDay.isEmpty() || timeOfCourse.isEmpty() || capacityText.trim().isEmpty() ||
-            duration.trim().isEmpty() || pricePerClass.trim().isEmpty() || selectedTypeOfClass == -1){
+        if (selectedDay.isEmpty() || timeOfCourse.isEmpty() || capacityText.isEmpty() ||
+            duration.isEmpty() || pricePerClass.isEmpty() || selectedTypeOfClass == -1){
             displayRequiredFieldsAlert();
             return;
         }
@@ -114,11 +114,13 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         yogaCourse.price_per_class = pricePerClass;
         yogaCourse.description = description;
 
-        long courseId = yogaDatabase.yogaCourseDao().createYogaCourse(yogaCourse);
+        long courseId = yogaDatabase.yogaCourseDao().create(yogaCourse);
 
         Toast.makeText(this, "Yoga course has been created with id: " + courseId,
                 Toast.LENGTH_LONG
         ).show();
+
+        setBackToCourse();
     }
 
     private void displayRequiredFieldsAlert(){

@@ -2,9 +2,241 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/editCourse"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.EditYogaCourseActivity">
+    tools:context=".activities.EditYogaCourseActivity"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="7dp">
+
+    <TextView
+        android:id="@+id/titleEditCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="56dp"
+        android:text="Edit Yoga Course"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/labelDayOfTheWeek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_day_of_the_week"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleEditCourse" />
+
+    <Spinner
+        android:id="@+id/spinnerDayOfTheWeek"
+        android:layout_width="332dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:entries="@array/daysOfTheWeek"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelDayOfTheWeek" />
+
+    <TextView
+        android:id="@+id/labelTimeOfCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_time_of_course"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerDayOfTheWeek" />
+
+    <TextView
+        android:id="@+id/labelCapacity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_capacity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPickTime" />
+
+    <Button
+        android:id="@+id/backToCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="48dp"
+        android:text="Back"
+        app:layout_constraintEnd_toStartOf="@+id/titleEditCourse"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/labelDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_duration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textCapacity" />
+
+    <EditText
+        android:id="@+id/textDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelDuration" />
+
+    <TextView
+        android:id="@+id/labelPricePerClass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_price_per_class"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textDuration" />
+
+    <EditText
+        android:id="@+id/textPricePerClass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelPricePerClass" />
+
+    <TextView
+        android:id="@+id/labelTypeOfClass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="268dp"
+        android:layout_marginTop="328dp"
+        android:text="@string/label_type_of_class"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleEditCourse" />
+
+    <RadioGroup
+        android:id="@+id/radioTypeOfClass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="268dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelTypeOfClass">
+
+        <RadioButton
+            android:id="@+id/radioFlowYoga"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Flow Yoga" />
+
+        <RadioButton
+            android:id="@+id/radioAerialYoga"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aerial Yoga" />
+
+        <RadioButton
+            android:id="@+id/radioFamilyYoga"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Family Yoga" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/labelDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textPricePerClass" />
+
+    <EditText
+        android:id="@+id/textDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelDescription" />
+
+    <Button
+        android:id="@+id/submitEditCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="36dp"
+        android:text="Save"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textDescription" />
+
+    <EditText
+        android:id="@+id/textCapacity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:ems="10"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelCapacity" />
+
+    <TextView
+        android:id="@+id/labelPersons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="16dp"
+        android:text="persons"
+        app:layout_constraintStart_toEndOf="@+id/textCapacity"
+        app:layout_constraintTop_toBottomOf="@+id/labelCapacity" />
+
+    <Button
+        android:id="@+id/btnPickTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="Pick time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelTimeOfCourse" />
+
+    <TextView
+        android:id="@+id/labelDisplayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toEndOf="@+id/btnPickTime"
+        app:layout_constraintTop_toBottomOf="@+id/labelTimeOfCourse" />
+
+    <Button
+        android:id="@+id/btnDeleteCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="48dp"
+        android:text="Delete"
+        android:backgroundTint="#FF0000"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toEndOf="@+id/titleEditCourse"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnViewClasses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="36dp"
+        android:text="View Classes"
+        app:layout_constraintStart_toEndOf="@+id/submitEditCourse"
+        app:layout_constraintTop_toBottomOf="@+id/textDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
