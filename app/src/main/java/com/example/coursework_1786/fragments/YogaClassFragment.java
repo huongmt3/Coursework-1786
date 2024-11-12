@@ -25,6 +25,7 @@ import java.util.List;
 public class YogaClassFragment extends Fragment {
 
     YogaDatabase yogaDatabase;
+    YogaClassAdapter yogaClassAdapter;
     RecyclerView recyclerView;
     Button navigateCreateClass;
     Button refreshBtn;
@@ -57,13 +58,15 @@ public class YogaClassFragment extends Fragment {
         if (hasCourseId){
             long courseId = requireActivity().getIntent().getLongExtra("course_id", 0L);
             yogaClasses = yogaDatabase.yogaClassDao().getByYogaCourseId(courseId);
+            yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext(), courseId);
             System.out.println(courseId);
         }
         else {
             yogaClasses = yogaDatabase.yogaClassDao().getAll();
+            yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext());
         }
 
-        setYogaClassAdapter(yogaClasses, recyclerView);
+        recyclerView.setAdapter(yogaClassAdapter);
         navigateCreateClass.setEnabled(hasCourseId);
         navigateCreateClass.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CreateYogaClassActivity.class);
@@ -76,7 +79,8 @@ public class YogaClassFragment extends Fragment {
 
         refreshBtn.setOnClickListener(v -> {
             List<YogaClass> allYogaClasses = yogaDatabase.yogaClassDao().getAll();
-            setYogaClassAdapter(allYogaClasses, recyclerView);
+            yogaClassAdapter = new YogaClassAdapter(allYogaClasses, requireContext());
+            recyclerView.setAdapter(yogaClassAdapter);
             clearCourseIdIntent();
             navigateCreateClass.setEnabled(false);
         });

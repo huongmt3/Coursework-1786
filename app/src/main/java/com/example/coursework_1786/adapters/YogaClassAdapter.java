@@ -9,21 +9,31 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.example.coursework_1786.R;
-import com.example.coursework_1786.activities.EditYogaCourseActivity;
+import com.example.coursework_1786.activities.EditYogaClassActivity;
+import com.example.coursework_1786.database.YogaDatabase;
 import com.example.coursework_1786.models.YogaClass;
+import com.example.coursework_1786.models.YogaCourse;
 
 import java.util.List;
 
 public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.YogaClassViewHolder> {
-
+    private YogaDatabase yogaDatabase;
     List<YogaClass> yogaClasses;
     Context context;
+    long courseId;
 
     public YogaClassAdapter(List<YogaClass> yogaClasses, Context context) {
         this.yogaClasses = yogaClasses;
         this.context = context;
+    }
+
+    public YogaClassAdapter(List<YogaClass> yogaClasses, Context context, long courseId) {
+        this.yogaClasses = yogaClasses;
+        this.context = context;
+        this.courseId = courseId;
     }
 
     @NonNull
@@ -32,6 +42,12 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
         View itemView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.item_yoga_class, parent, false);
+
+        yogaDatabase = Room
+                .databaseBuilder(context.getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .allowMainThreadQueries()
+                .build();
+
         return new YogaClassAdapter.YogaClassViewHolder(itemView);
     }
 
@@ -41,10 +57,14 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
         holder.classDate.setText(yogaClass.date);
         holder.classTeacher.setText(yogaClass.teacher);
 
+//        YogaCourse yogaCourse = yogaDatabase.yogaCourseDao().getById(yogaClass.yoga_course_id);
+
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, EditYogaCourseActivity.class);
+            Intent intent = new Intent(context, EditYogaClassActivity.class);
             intent.putExtra("class_id", yogaClass.id);
             intent.putExtra("course_id", yogaClass.yoga_course_id);
+            intent.putExtra("extra_course_id", this.courseId);
+//            intent.putExtra("day_of_the_week", yogaCourse.day_of_the_week);
             intent.putExtra("date", yogaClass.date);
             intent.putExtra("teacher", yogaClass.teacher);
             intent.putExtra("additional_comments", yogaClass.additional_comments);

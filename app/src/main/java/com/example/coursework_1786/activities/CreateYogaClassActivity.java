@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,8 +16,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.room.Room;
 
 import com.example.coursework_1786.R;
+import com.example.coursework_1786.database.YogaDatabase;
+import com.example.coursework_1786.models.YogaClass;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,10 +29,13 @@ import java.util.Date;
 import java.util.Locale;
 
 public class CreateYogaClassActivity extends AppCompatActivity {
-
+    private YogaDatabase yogaDatabase;
     Button backToClassBtn;
     Button pickDateBtn;
     TextView dateText;
+    EditText teacherText;
+    EditText commentsText;
+    Button submitCreateClassBtn;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -42,6 +49,11 @@ public class CreateYogaClassActivity extends AppCompatActivity {
             return insets;
         });
 
+        yogaDatabase = Room
+                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .allowMainThreadQueries()
+                .build();
+
         long courseId = getIntent().getLongExtra("course_id", 0L);
         String dayOfTheWeek = getIntent().getStringExtra("day_of_the_week");
 
@@ -50,10 +62,15 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         backToClassBtn = findViewById(R.id.backToClass);
         pickDateBtn = findViewById(R.id.btnPickDate);
         dateText = findViewById(R.id.labelDisplayDate);
+        teacherText = findViewById(R.id.textTeacher);
+        commentsText = findViewById(R.id.textComments);
+        submitCreateClassBtn = findViewById(R.id.submitCreateClass);
 
         backToClassBtn.setOnClickListener(v -> setBackToClasses(courseId));
 
         pickDateBtn.setOnClickListener(v -> showDatePickerDialog(dayOfTheWeek));
+
+        submitCreateClassBtn.setOnClickListener(v -> submitCreateYogaClass());
     }
 
     private void setBackToClasses(long courseId){
@@ -94,7 +111,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    public static int getDayOfWeek(String dayString) {
+    private static int getDayOfWeek(String dayString) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.ENGLISH);
             Date date = format.parse(dayString);
@@ -110,4 +127,47 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         }
     }
 
+    private void submitCreateYogaClass(){
+        String date = dateText.getText().toString().trim();
+        String teacher = teacherText.getText().toString().trim();
+
+        if (date.isEmpty() || teacher.isEmpty()){
+            displayRequiredFieldsAlert();
+            return;
+        }
+
+        String comments = commentsText.getText().toString().trim();
+
+        new AlertDialog.Builder(this)
+                .setTitle("Details Entered")
+                .setMessage(
+                        "Details: \n" +
+                                "Date: " + date + "\n" +
+                                "Teacher: " + teacher + "\n" +
+                                "Additional comments: " + comments + "\n"
+                )
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    YogaClass yogaClass = new YogaClass();
+                    long courseId = getIntent().getLongExtra("course_id", 0L);
+                    yogaClass.yoga_course_id = courseId;
+                    yogaClass.date = date;
+                    yogaClass.teacher = teacher;
+                    yogaClass.additional_comments = comments;
+                    long classId = yogaDatabase.yogaClassDao().create(yogaClass);
+                    Toast.makeText(this, "Yoga class has been created with id: " + classId,
+                            Toast.LENGTH_LONG
+                    ).show();
+                    setBackToClasses(courseId);
+                })
+                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
+    private void displayRequiredFieldsAlert(){
+        new AlertDialog.Builder(this)
+                .setTitle("Notification")
+                .setMessage("Please fill all required fields.")
+                .setNeutralButton("OK", (dialogInterface, i) -> {})
+                .show();
+    }
 }
