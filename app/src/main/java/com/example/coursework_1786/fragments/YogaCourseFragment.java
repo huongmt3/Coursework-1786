@@ -32,8 +32,6 @@ public class YogaCourseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -48,7 +46,7 @@ public class YogaCourseFragment extends Fragment {
         });
 
         yogaDatabase = Room
-                .databaseBuilder(requireContext(), YogaDatabase.class, "yoga_db")
+                .databaseBuilder(requireContext(), YogaDatabase.class, "comp1786_yoga_db")
                 .allowMainThreadQueries()
                 .build();
 

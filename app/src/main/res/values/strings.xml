@@ -18,4 +18,7 @@
     <string name="label_price_per_class">Price per class:<font color='#FF0000'>*</font></string>
     <string name="label_type_of_class">Type of class:<font color='#FF0000'>*</font></string>
     <string name="label_description">Description:</string>
+    <string name="label_date">Date:<font color='#FF0000'>*</font></string>
+    <string name="label_teacher">Teacher:<font color='#FF0000'>*</font></string>
+    <string name="label_additional_comments">Additional comments:</string>
 </resources>

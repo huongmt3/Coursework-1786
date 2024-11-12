@@ -41,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/labelDayOfTheWeek" />
 
     <TextView
-        android:id="@+id/labelTimeOfCourse"
+        android:id="@+id/labelDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -58,7 +58,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/label_capacity"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnPickTime" />
+        app:layout_constraintTop_toBottomOf="@+id/btnPickDate" />
 
     <Button
         android:id="@+id/backToCourse"
@@ -72,7 +72,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/labelDuration"
+        android:id="@+id/labelTeacher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -82,14 +82,14 @@
         app:layout_constraintTop_toBottomOf="@+id/textCapacity" />
 
     <EditText
-        android:id="@+id/textDuration"
+        android:id="@+id/textTeacher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:ems="10"
         android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelDuration" />
+        app:layout_constraintTop_toBottomOf="@+id/labelTeacher" />
 
     <TextView
         android:id="@+id/labelPricePerClass"
@@ -99,7 +99,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/label_price_per_class"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDuration" />
+        app:layout_constraintTop_toBottomOf="@+id/textTeacher" />
 
     <EditText
         android:id="@+id/textPricePerClass"
@@ -149,7 +149,7 @@
     </RadioGroup>
 
     <TextView
-        android:id="@+id/labelDescription"
+        android:id="@+id/labelComments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -159,7 +159,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textPricePerClass" />
 
     <EditText
-        android:id="@+id/textDescription"
+        android:id="@+id/textComments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -167,17 +167,17 @@
         android:gravity="start|top"
         android:inputType="textMultiLine"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/labelComments" />
 
     <Button
-        android:id="@+id/submitCreateCourse"
+        android:id="@+id/submitCreateClass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="159dp"
         android:layout_marginTop="33dp"
         android:text="Submit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/textComments" />
 
     <EditText
         android:id="@+id/textCapacity"
@@ -200,21 +200,21 @@
         app:layout_constraintTop_toBottomOf="@+id/labelCapacity" />
 
     <Button
-        android:id="@+id/btnPickTime"
+        android:id="@+id/btnPickDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:text="Pick time"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelTimeOfCourse" />
+        app:layout_constraintTop_toBottomOf="@+id/labelDate" />
 
     <TextView
-        android:id="@+id/labelDisplayTime"
+        android:id="@+id/labelDisplayDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintStart_toEndOf="@+id/btnPickTime"
-        app:layout_constraintTop_toBottomOf="@+id/labelTimeOfCourse" />
+        app:layout_constraintStart_toEndOf="@+id/btnPickDate"
+        app:layout_constraintTop_toBottomOf="@+id/labelDate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

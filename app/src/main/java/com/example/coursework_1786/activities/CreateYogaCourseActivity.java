@@ -3,7 +3,6 @@ package com.example.coursework_1786.activities;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -39,21 +38,21 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_yoga_course);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.labelTimeOfCourse), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.labelDate), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
         yogaDatabase = Room
-                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_db")
+                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
                 .allowMainThreadQueries()
                 .build();
 
         backToCourse = findViewById(R.id.backToCourse);
-        timeText = findViewById(R.id.labelDisplayTime);
-        pickTimeBtn = findViewById(R.id.btnPickTime);
-        submitCreateCourseBtn = findViewById(R.id.submitCreateCourse);
+        timeText = findViewById(R.id.labelDisplayDate);
+        pickTimeBtn = findViewById(R.id.btnPickDate);
+        submitCreateCourseBtn = findViewById(R.id.submitCreateClass);
 
         backToCourse.setOnClickListener(v -> setBackToCourse());
 
@@ -88,12 +87,12 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
     private void submitCreateCourse(){
         Spinner dayOfTheWeeksSpinner = findViewById(R.id.spinnerDayOfTheWeek);
         String selectedDay = dayOfTheWeeksSpinner.getSelectedItem().toString();
-        String timeOfCourse = ((TextView) findViewById(R.id.labelDisplayTime)).getText().toString();
+        String timeOfCourse = ((TextView) findViewById(R.id.labelDisplayDate)).getText().toString();
         String capacityText = ((EditText) findViewById(R.id.textCapacity)).getText().toString().trim();
-        String duration = ((TextView) findViewById(R.id.textDuration)).getText().toString().trim();
+        String duration = ((TextView) findViewById(R.id.textTeacher)).getText().toString().trim();
         String pricePerClass = ((TextView) findViewById(R.id.textPricePerClass)).getText().toString().trim();
         RadioGroup typeOfClassRadio = findViewById(R.id.radioTypeOfClass);
-        String description = ((TextView) findViewById(R.id.textDescription)).getText().toString();
+        String description = ((TextView) findViewById(R.id.textComments)).getText().toString();
 
         int selectedTypeOfClass = typeOfClassRadio.getCheckedRadioButtonId();
 
@@ -114,13 +113,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         yogaCourse.price_per_class = pricePerClass;
         yogaCourse.description = description;
 
-        long courseId = yogaDatabase.yogaCourseDao().create(yogaCourse);
-
-        Toast.makeText(this, "Yoga course has been created with id: " + courseId,
-                Toast.LENGTH_LONG
-        ).show();
-
-        setBackToCourse();
+        displayConfirmCreateAlert(yogaCourse);
     }
 
     private void displayRequiredFieldsAlert(){
@@ -135,25 +128,28 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void displayNextAlert(YogaCourse yogaCourse){
+    private void displayConfirmCreateAlert(YogaCourse yogaCourse){
         new AlertDialog.Builder(this)
                 .setTitle("Details Entered")
                 .setMessage(
                         "Details: \n" +
-                                yogaCourse.day_of_the_week + "\n" +
-                                yogaCourse.time_of_course + "\n" +
-                                yogaCourse.capacity + "\n" +
-                                yogaCourse.duration + "\n" +
-                                yogaCourse.type_of_class + "\n" +
-                                yogaCourse.price_per_class + "\n" +
-                                yogaCourse.description
+                        "Day of the week: " + yogaCourse.day_of_the_week + "\n" +
+                        "Time of course: " + yogaCourse.time_of_course + "\n" +
+                        "Capacity: " + yogaCourse.capacity + "persons\n" +
+                        "Duration: " + yogaCourse.duration + "\n" +
+                        "Type of class: " + yogaCourse.type_of_class + "\n" +
+                        "Price per class: " + yogaCourse.price_per_class + "\n" +
+                        "Description: " + yogaCourse.description
                 )
-                .setNeutralButton("Back", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    long courseId = yogaDatabase.yogaCourseDao().create(yogaCourse);
 
-                    }
+                    Toast.makeText(this, "Yoga course has been created with id: " + courseId,
+                            Toast.LENGTH_LONG
+                    ).show();
+                    setBackToCourse();
                 })
+                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 }

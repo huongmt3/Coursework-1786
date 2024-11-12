@@ -41,6 +41,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
     RadioGroup typeOfClassRadio;
     Button saveCourseBtn;
     Button deleteCourseBtn;
+    Button viewClassesBtn;
 
     @SuppressLint({"MissingInflatedId", "DefaultLocale"})
     @Override
@@ -55,7 +56,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         });
 
         yogaDatabase = Room
-                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_db")
+                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
                 .allowMainThreadQueries()
                 .build();
 
@@ -73,17 +74,18 @@ public class EditYogaCourseActivity extends AppCompatActivity {
                 capacity, duration, pricePerClass, typeOfClass, description);
 
         daysOfTheWeekSpinner = findViewById(R.id.spinnerDayOfTheWeek);
-        timeText = findViewById(R.id.labelDisplayTime);
+        timeText = findViewById(R.id.labelDisplayDate);
         backToCourseBtn = findViewById(R.id.backToCourse);
-        pickTimeBtn = findViewById(R.id.btnPickTime);
-        submitUpdateCourseBtn = findViewById(R.id.submitCreateCourse);
+        pickTimeBtn = findViewById(R.id.btnPickDate);
+        submitUpdateCourseBtn = findViewById(R.id.submitCreateClass);
         capacityText = findViewById(R.id.textCapacity);
-        durationText = findViewById(R.id.textDuration);
+        durationText = findViewById(R.id.textTeacher);
         pricePerClassText = findViewById(R.id.textPricePerClass);
-        descriptionText = findViewById(R.id.textDescription);
+        descriptionText = findViewById(R.id.textComments);
         typeOfClassRadio = findViewById(R.id.radioTypeOfClass);
         saveCourseBtn = findViewById(R.id.submitEditCourse);
         deleteCourseBtn = findViewById(R.id.btnDeleteCourse);
+        viewClassesBtn = findViewById(R.id.btnViewClasses);
 
         String[] daysOfTheWeek = getResources().getStringArray(R.array.daysOfTheWeek);
         int dayPosition = Arrays.asList(daysOfTheWeek).indexOf(dayOfTheWeek);
@@ -103,6 +105,8 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         saveCourseBtn.setOnClickListener(v -> saveYogaCourse(courseId));
 
         deleteCourseBtn.setOnClickListener(v -> displayConfirmDeleteAlert(courseId));
+
+        viewClassesBtn.setOnClickListener(v -> navigateToClasses(courseId, dayOfTheWeek));
     }
 
     private void setBackToCourse(){
@@ -214,5 +218,13 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         ).show();
 
         setBackToCourse();
+    }
+
+    private void navigateToClasses(Long courseId, String dayOfTheWeek){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("target_fragment", "YogaClassFragment");
+        intent.putExtra("course_id", courseId);
+        intent.putExtra("day_of_the_week", dayOfTheWeek);
+        startActivity(intent);
     }
 }

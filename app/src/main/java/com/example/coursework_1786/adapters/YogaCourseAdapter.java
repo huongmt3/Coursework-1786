@@ -19,7 +19,7 @@ import java.util.List;
 public class YogaCourseAdapter extends RecyclerView.Adapter<YogaCourseAdapter.YogaCourseViewHolder> {
 
     List<YogaCourse> yogaCourses;
-    private Context context;
+    Context context;
 
     public YogaCourseAdapter(List<YogaCourse> yogaCourses, Context context) {
         this.yogaCourses = yogaCourses;
