@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="159dp"
         android:layout_marginTop="33dp"
-        android:text="Submit"
+        android:text="Save"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textComments" />
 
@@ -110,5 +110,17 @@
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toEndOf="@+id/btnPickDate"
         app:layout_constraintTop_toBottomOf="@+id/labelDate" />
+
+    <Button
+        android:id="@+id/btnDeleteClass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Delete"
+        android:backgroundTint="#FF0000"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

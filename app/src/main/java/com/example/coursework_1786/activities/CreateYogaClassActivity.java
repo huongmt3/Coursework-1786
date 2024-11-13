@@ -50,13 +50,14 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         });
 
         yogaDatabase = Room
-                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
-        long courseId = getIntent().getLongExtra("course_id", 0L);
+        Long courseId = getIntent().getLongExtra("course_id", 0L);
         String dayOfTheWeek = getIntent().getStringExtra("day_of_the_week");
 
+        System.out.println(courseId);
         System.out.println(dayOfTheWeek);
 
         backToClassBtn = findViewById(R.id.backToClass);
@@ -137,18 +138,17 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         }
 
         String comments = commentsText.getText().toString().trim();
-
+        long courseId = getIntent().getLongExtra("course_id", 0L);
         new AlertDialog.Builder(this)
                 .setTitle("Details Entered")
                 .setMessage(
-                        "Details: \n" +
-                                "Date: " + date + "\n" +
-                                "Teacher: " + teacher + "\n" +
-                                "Additional comments: " + comments + "\n"
+                        "Course ID: " + courseId + "\n" +
+                        "Date: " + date + "\n" +
+                        "Teacher: " + teacher + "\n" +
+                        "Additional comments: " + comments + "\n"
                 )
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     YogaClass yogaClass = new YogaClass();
-                    long courseId = getIntent().getLongExtra("course_id", 0L);
                     yogaClass.yoga_course_id = courseId;
                     yogaClass.date = date;
                     yogaClass.teacher = teacher;

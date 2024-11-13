@@ -45,7 +45,7 @@ public class YogaClassFragment extends Fragment {
         refreshBtn = view.findViewById(R.id.btnRefresh);
 
         yogaDatabase = Room
-                .databaseBuilder(requireContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .databaseBuilder(requireContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
@@ -55,8 +55,8 @@ public class YogaClassFragment extends Fragment {
         List<YogaClass> yogaClasses;
 
         boolean hasCourseId = requireActivity().getIntent().hasExtra("course_id");
+        Long courseId = requireActivity().getIntent().getLongExtra("course_id", 0L);
         if (hasCourseId){
-            long courseId = requireActivity().getIntent().getLongExtra("course_id", 0L);
             yogaClasses = yogaDatabase.yogaClassDao().getByYogaCourseId(courseId);
             yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext(), courseId);
             System.out.println(courseId);
@@ -68,14 +68,7 @@ public class YogaClassFragment extends Fragment {
 
         recyclerView.setAdapter(yogaClassAdapter);
         navigateCreateClass.setEnabled(hasCourseId);
-        navigateCreateClass.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CreateYogaClassActivity.class);
-            long courseId = requireActivity().getIntent().getLongExtra("course_id", 0L);
-            String dayOfTheWeek = requireActivity().getIntent().getStringExtra("day_of_the_week");
-            intent.putExtra("course_id", courseId);
-            intent.putExtra("day_of_the_week", dayOfTheWeek);
-            startActivity(intent);
-        });
+        navigateCreateClass.setOnClickListener(v -> setNavigateCreateClass(courseId));
 
         refreshBtn.setOnClickListener(v -> {
             List<YogaClass> allYogaClasses = yogaDatabase.yogaClassDao().getAll();
@@ -103,5 +96,15 @@ public class YogaClassFragment extends Fragment {
     private void setYogaClassAdapter(List<YogaClass> yogaClasses, RecyclerView recyclerView){
         YogaClassAdapter adapter = new YogaClassAdapter(yogaClasses, requireContext());
         recyclerView.setAdapter(adapter);
+    }
+
+    private void setNavigateCreateClass(Long courseId){
+        Intent intent = new Intent(getActivity(), CreateYogaClassActivity.class);
+        String dayOfTheWeek = requireActivity().getIntent().getStringExtra("day_of_the_week");
+        System.out.println("YogaClassFragment " + courseId);
+        System.out.println("YogaClassFragment " + dayOfTheWeek);
+        intent.putExtra("course_id", courseId);
+        intent.putExtra("day_of_the_week", dayOfTheWeek);
+        startActivity(intent);
     }
 }

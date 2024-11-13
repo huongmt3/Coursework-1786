@@ -22,10 +22,12 @@ import androidx.room.Room;
 
 import com.example.coursework_1786.R;
 import com.example.coursework_1786.database.YogaDatabase;
+import com.example.coursework_1786.models.YogaClass;
 import com.example.coursework_1786.models.YogaCourse;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class EditYogaCourseActivity extends AppCompatActivity {
     private YogaDatabase yogaDatabase;
@@ -42,6 +44,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
     Button saveCourseBtn;
     Button deleteCourseBtn;
     Button viewClassesBtn;
+    YogaCourse yogaCourse = new YogaCourse();
 
     @SuppressLint({"MissingInflatedId", "DefaultLocale"})
     @Override
@@ -56,12 +59,12 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         });
 
         yogaDatabase = Room
-                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
         Intent intent = getIntent();
-        Long courseId = intent.getLongExtra("course_id", 0L);
+        long courseId = intent.getLongExtra("course_id", 0L);
         String dayOfTheWeek = intent.getStringExtra("day_of_the_week");
         String timeOfCourse = intent.getStringExtra("time_of_course");
         int capacity = intent.getIntExtra("capacity", 0);
@@ -72,6 +75,15 @@ public class EditYogaCourseActivity extends AppCompatActivity {
 
         System.out.printf("%d %s %s %d %s %s %d %s%n", courseId, dayOfTheWeek, timeOfCourse,
                 capacity, duration, pricePerClass, typeOfClass, description);
+
+        yogaCourse.id = courseId;
+        yogaCourse.day_of_the_week = dayOfTheWeek;
+        yogaCourse.time_of_course = timeOfCourse;
+        yogaCourse.capacity = capacity;
+        yogaCourse.duration = duration;
+        yogaCourse.price_per_class = pricePerClass;
+        yogaCourse.type_of_class = typeOfClass;
+        yogaCourse.description = description;
 
         daysOfTheWeekSpinner = findViewById(R.id.spinnerDayOfTheWeek);
         timeText = findViewById(R.id.labelDisplayDate);
@@ -102,7 +114,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
 
         pickTimeBtn.setOnClickListener(v -> showTimePickerDialog());
 
-        saveCourseBtn.setOnClickListener(v -> saveYogaCourse(courseId));
+        saveCourseBtn.setOnClickListener(v -> saveYogaCourse(yogaCourse));
 
         deleteCourseBtn.setOnClickListener(v -> displayConfirmDeleteAlert(courseId));
 
@@ -132,7 +144,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    private void saveYogaCourse(Long courseId){
+    private void saveYogaCourse(YogaCourse yogaCourse){
         String dayOfTheWeek = daysOfTheWeekSpinner.getSelectedItem().toString();
         String timeOfCourse = timeText.getText().toString();
         String capacity = capacityText.getText().toString().trim();
@@ -148,8 +160,6 @@ public class EditYogaCourseActivity extends AppCompatActivity {
             return;
         }
 
-        YogaCourse yogaCourse = new YogaCourse();
-        yogaCourse.id = courseId;
         yogaCourse.day_of_the_week = dayOfTheWeek;
         yogaCourse.time_of_course = timeOfCourse;
         yogaCourse.capacity = Integer.parseInt(capacity);
@@ -158,13 +168,27 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         yogaCourse.type_of_class = typeOfClass;
         yogaCourse.description = description;
 
-        long updatedCourseId = yogaDatabase.yogaCourseDao().update(yogaCourse);
+        new AlertDialog.Builder(this)
+                .setTitle("Details Entered")
+                .setMessage(
+                        "Day of the week: " + yogaCourse.day_of_the_week + "\n" +
+                        "Time of course: " + yogaCourse.time_of_course + "\n" +
+                        "Capacity: " + yogaCourse.capacity + "persons\n" +
+                        "Duration: " + yogaCourse.duration + "\n" +
+                        "Type of class: " + yogaCourse.type_of_class + "\n" +
+                        "Price per class: " + yogaCourse.price_per_class + "\n" +
+                        "Description: " + yogaCourse.description
+                )
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    yogaDatabase.yogaCourseDao().update(yogaCourse);
 
-        Toast.makeText(this, "Yoga course has been updated, id: " + updatedCourseId,
-                Toast.LENGTH_LONG
-        ).show();
-
-        setBackToCourse();
+                    Toast.makeText(this, "Yoga course has been updated, id: " + yogaCourse.id,
+                            Toast.LENGTH_LONG
+                    ).show();
+                    setBackToCourse();
+                })
+                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
     }
 
     private void displayRequiredFieldsAlert(){
@@ -193,23 +217,11 @@ public class EditYogaCourseActivity extends AppCompatActivity {
     }
 
     private void deleteYogaCourse(Long courseId){
-        String dayOfTheWeek = daysOfTheWeekSpinner.getSelectedItem().toString();
-        String timeOfCourse = timeText.getText().toString();
-        String capacity = capacityText.getText().toString().trim();
-        String duration = durationText.getText().toString().trim();
-        String pricePerClass = pricePerClassText.getText().toString().trim();
-        int typeOfClass = typeOfClassRadio.getCheckedRadioButtonId();
-        String description = descriptionText.getText().toString().trim();
-
-        YogaCourse yogaCourse = new YogaCourse();
-        yogaCourse.id = courseId;
-        yogaCourse.day_of_the_week = dayOfTheWeek;
-        yogaCourse.time_of_course = timeOfCourse;
-        yogaCourse.capacity = !capacity.isEmpty() ? Integer.parseInt(capacity) : 0;
-        yogaCourse.duration = duration;
-        yogaCourse.price_per_class = pricePerClass;
-        yogaCourse.type_of_class = typeOfClass;
-        yogaCourse.description = description;
+        List<YogaClass> yogaClasses = yogaDatabase.yogaClassDao().getByYogaCourseId(courseId);
+        if (!yogaClasses.isEmpty()){
+            displayCannotDeleteCourseAlert();
+            return;
+        }
 
         long deletedCourseId = yogaDatabase.yogaCourseDao().delete(yogaCourse);
 
@@ -226,5 +238,13 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         intent.putExtra("course_id", courseId);
         intent.putExtra("day_of_the_week", dayOfTheWeek);
         startActivity(intent);
+    }
+
+    private void displayCannotDeleteCourseAlert(){
+        new AlertDialog.Builder(this)
+                .setTitle("Notification")
+                .setMessage("Cannot delete this course since there are still classes of it.")
+                .setNeutralButton("OK", (dialogInterface, i) -> {})
+                .show();
     }
 }

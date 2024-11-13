@@ -44,7 +44,7 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
                 .inflate(R.layout.item_yoga_class, parent, false);
 
         yogaDatabase = Room
-                .databaseBuilder(context.getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .databaseBuilder(context.getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
@@ -57,14 +57,14 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
         holder.classDate.setText(yogaClass.date);
         holder.classTeacher.setText(yogaClass.teacher);
 
-//        YogaCourse yogaCourse = yogaDatabase.yogaCourseDao().getById(yogaClass.yoga_course_id);
+        YogaCourse yogaCourse = yogaDatabase.yogaCourseDao().getById(yogaClass.yoga_course_id);
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EditYogaClassActivity.class);
             intent.putExtra("class_id", yogaClass.id);
             intent.putExtra("course_id", yogaClass.yoga_course_id);
             intent.putExtra("extra_course_id", this.courseId);
-//            intent.putExtra("day_of_the_week", yogaCourse.day_of_the_week);
+            intent.putExtra("day_of_the_week", yogaCourse.day_of_the_week);
             intent.putExtra("date", yogaClass.date);
             intent.putExtra("teacher", yogaClass.teacher);
             intent.putExtra("additional_comments", yogaClass.additional_comments);

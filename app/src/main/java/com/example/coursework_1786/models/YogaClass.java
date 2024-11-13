@@ -5,16 +5,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(
-        tableName = "yoga_classes",
-        foreignKeys = @ForeignKey(
-                entity = YogaCourse.class,
-                parentColumns = "id",
-                childColumns = "yoga_course_id",
-                onDelete = ForeignKey.CASCADE
-        ),
-        indices = {@Index("yoga_course_id")}
-)
+@Entity(tableName = "yoga_classes")
 public class YogaClass {
     @PrimaryKey(autoGenerate = true)
     public Long id;

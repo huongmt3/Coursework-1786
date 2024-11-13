@@ -45,7 +45,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         });
 
         yogaDatabase = Room
-                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 

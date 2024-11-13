@@ -46,7 +46,7 @@ public class YogaCourseFragment extends Fragment {
         });
 
         yogaDatabase = Room
-                .databaseBuilder(requireContext(), YogaDatabase.class, "comp1786_yoga_db")
+                .databaseBuilder(requireContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
