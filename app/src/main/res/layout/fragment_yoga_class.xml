@@ -1,24 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".fragments.YogaClassFragment">-->
-
-<!--    &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:text="Yoga Cass" />-->
-
-<!--</FrameLayout>-->
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".fragments.YogaCourseFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.YogaCourseFragment">
 
     <Button
         android:id="@+id/navigateCreateClass"
@@ -31,7 +17,7 @@ tools:context=".fragments.YogaCourseFragment">
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/searchClass"
+        android:id="@+id/searchText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -44,8 +30,8 @@ tools:context=".fragments.YogaCourseFragment">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/yogaClassRc"
         android:layout_width="410dp"
-        android:layout_height="600dp"
-        android:layout_marginTop="128dp"
+        android:layout_height="580dp"
+        android:layout_marginTop="148dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,7 +42,7 @@ tools:context=".fragments.YogaCourseFragment">
         android:layout_marginStart="40dp"
         android:layout_marginTop="60dp"
         android:text="Search"
-        app:layout_constraintStart_toEndOf="@+id/searchClass"
+        app:layout_constraintStart_toEndOf="@+id/searchText"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -68,4 +54,14 @@ tools:context=".fragments.YogaCourseFragment">
         android:text="Refresh"
         app:layout_constraintStart_toEndOf="@+id/navigateCreateClass"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/daySpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:entries="@array/daysOfTheWeek"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

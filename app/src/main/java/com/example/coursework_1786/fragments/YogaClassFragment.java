@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.example.coursework_1786.R;
 import com.example.coursework_1786.activities.CreateYogaClassActivity;
@@ -29,6 +31,9 @@ public class YogaClassFragment extends Fragment {
     RecyclerView recyclerView;
     Button navigateCreateClass;
     Button refreshBtn;
+    Button searchClassesBtn;
+    EditText searchText;
+    Spinner daySpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,9 @@ public class YogaClassFragment extends Fragment {
 
         navigateCreateClass = view.findViewById(R.id.navigateCreateClass);
         refreshBtn = view.findViewById(R.id.btnRefresh);
+        searchText = view.findViewById(R.id.searchText);
+        daySpinner = view.findViewById(R.id.daySpinner);
+        searchClassesBtn = view.findViewById(R.id.btnSearchClass);
 
         yogaDatabase = Room
                 .databaseBuilder(requireContext(), YogaDatabase.class, "yoga_database")
@@ -78,6 +86,12 @@ public class YogaClassFragment extends Fragment {
             navigateCreateClass.setEnabled(false);
         });
 
+        searchClassesBtn.setOnClickListener(v -> {
+            List<YogaClass> searchedYogaClasses = searchYogaClasses();
+            yogaClassAdapter = new YogaClassAdapter(searchedYogaClasses, requireContext());
+            recyclerView.setAdapter(yogaClassAdapter);
+        });
+
         return view;
     }
 
@@ -93,11 +107,6 @@ public class YogaClassFragment extends Fragment {
         }
     }
 
-    private void setYogaClassAdapter(List<YogaClass> yogaClasses, RecyclerView recyclerView){
-        YogaClassAdapter adapter = new YogaClassAdapter(yogaClasses, requireContext());
-        recyclerView.setAdapter(adapter);
-    }
-
     private void setNavigateCreateClass(Long courseId){
         Intent intent = new Intent(getActivity(), CreateYogaClassActivity.class);
         String dayOfTheWeek = requireActivity().getIntent().getStringExtra("day_of_the_week");
@@ -106,5 +115,11 @@ public class YogaClassFragment extends Fragment {
         intent.putExtra("course_id", courseId);
         intent.putExtra("day_of_the_week", dayOfTheWeek);
         startActivity(intent);
+    }
+
+    private List<YogaClass> searchYogaClasses(){
+        String teacher = searchText.getText().toString().trim();
+        String day = daySpinner.getSelectedItem().toString();
+        return yogaDatabase.yogaClassDao().searchByTeacherAndDay(teacher, day);
     }
 }

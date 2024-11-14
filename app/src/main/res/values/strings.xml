@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Coursework-1786</string>
     <string-array name="daysOfTheWeek">
+        <item>Select day</item>
         <item>Monday</item>
         <item>Tuesday</item>
         <item>Wednesday</item>

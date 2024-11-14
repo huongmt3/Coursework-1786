@@ -153,7 +153,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         int typeOfClass = typeOfClassRadio.getCheckedRadioButtonId();
         String description = descriptionText.getText().toString().trim();
 
-        if (dayOfTheWeek.isEmpty() || timeOfCourse.isEmpty() || capacity.isEmpty() ||
+        if (dayOfTheWeek.equals("Select day") || timeOfCourse.isEmpty() || capacity.isEmpty() ||
             duration.isEmpty() || pricePerClass.isEmpty() || typeOfClass == -1)
         {
             displayRequiredFieldsAlert();

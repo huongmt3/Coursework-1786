@@ -24,6 +24,12 @@ public interface YogaClassDao {
     @Query("SELECT * FROM yoga_classes WHERE id = :id")
     YogaClass getById(long id);
 
+    @Query("SELECT yc.* FROM yoga_classes yc " +
+            "JOIN yoga_courses yco ON yc.yoga_course_id = yco.id " +
+            "WHERE (:teacher = '' OR yc.teacher LIKE '%' || :teacher || '%') " +
+            "AND (:day = 'Select day' OR yco.day_of_the_week = :day)")
+    List<YogaClass> searchByTeacherAndDay(String teacher, String day);
+
     @Update
     int update(YogaClass yogaClass);
 

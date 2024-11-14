@@ -96,7 +96,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
 
         int selectedTypeOfClass = typeOfClassRadio.getCheckedRadioButtonId();
 
-        if (selectedDay.isEmpty() || timeOfCourse.isEmpty() || capacityText.isEmpty() ||
+        if (selectedDay.equals("Select day") || timeOfCourse.isEmpty() || capacityText.isEmpty() ||
             duration.isEmpty() || pricePerClass.isEmpty() || selectedTypeOfClass == -1){
             displayRequiredFieldsAlert();
             return;
@@ -132,7 +132,6 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Details Entered")
                 .setMessage(
-                        "Details: \n" +
                         "Day of the week: " + yogaCourse.day_of_the_week + "\n" +
                         "Time of course: " + yogaCourse.time_of_course + "\n" +
                         "Capacity: " + yogaCourse.capacity + "persons\n" +
