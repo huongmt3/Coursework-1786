@@ -19,6 +19,8 @@ import com.example.coursework_1786.fragments.YogaClassFragment;
 import com.example.coursework_1786.fragments.YogaCourseFragment;
 import com.example.coursework_1786.R;
 import com.example.coursework_1786.databinding.ActivityMainBinding;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("huhu");
     }
 
     private void replaceFragment(Fragment fragment){

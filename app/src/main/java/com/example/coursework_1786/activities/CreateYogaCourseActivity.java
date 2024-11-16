@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,7 +23,10 @@ import androidx.room.Room;
 
 import com.example.coursework_1786.R;
 import com.example.coursework_1786.database.YogaDatabase;
+import com.example.coursework_1786.models.FirebaseYogaCourse;
 import com.example.coursework_1786.models.YogaCourse;
+import com.example.coursework_1786.utils.NetworkUtils;
+import com.example.coursework_1786.utils.YogaFirebaseDbUtils;
 
 import java.util.Calendar;
 
@@ -113,7 +117,28 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         yogaCourse.price_per_class = pricePerClass;
         yogaCourse.description = description;
 
-        displayConfirmCreateAlert(yogaCourse);
+        new AlertDialog.Builder(this)
+                .setTitle("Details Entered")
+                .setMessage(
+                        "Day of the week: " + yogaCourse.day_of_the_week + "\n" +
+                        "Time of course: " + yogaCourse.time_of_course + "\n" +
+                        "Capacity: " + yogaCourse.capacity + "persons\n" +
+                        "Duration: " + yogaCourse.duration + "\n" +
+                        "Type of class: " + yogaCourse.type_of_class + "\n" +
+                        "Price per class: " + yogaCourse.price_per_class + "\n" +
+                        "Description: " + yogaCourse.description
+                )
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    long courseId = yogaDatabase.yogaCourseDao().create(yogaCourse);
+                    yogaCourse.id = courseId;
+                    Toast.makeText(this, "Yoga course has been created with id: " + courseId,
+                            Toast.LENGTH_LONG
+                    ).show();
+                    setBackToCourse();
+                    syncToFirebaseDb(yogaCourse);
+                })
+                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
     }
 
     private void displayRequiredFieldsAlert(){
@@ -128,27 +153,26 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void displayConfirmCreateAlert(YogaCourse yogaCourse){
-        new AlertDialog.Builder(this)
-                .setTitle("Details Entered")
-                .setMessage(
-                        "Day of the week: " + yogaCourse.day_of_the_week + "\n" +
-                        "Time of course: " + yogaCourse.time_of_course + "\n" +
-                        "Capacity: " + yogaCourse.capacity + "persons\n" +
-                        "Duration: " + yogaCourse.duration + "\n" +
-                        "Type of class: " + yogaCourse.type_of_class + "\n" +
-                        "Price per class: " + yogaCourse.price_per_class + "\n" +
-                        "Description: " + yogaCourse.description
-                )
-                .setPositiveButton("OK", (dialogInterface, i) -> {
-                    long courseId = yogaDatabase.yogaCourseDao().create(yogaCourse);
+    private void syncToFirebaseDb(YogaCourse yogaCourse){
+        RadioButton selectedRadioBtn = findViewById(yogaCourse.type_of_class);
+        String selectedTypeOfClass = selectedRadioBtn.getText().toString();
 
-                    Toast.makeText(this, "Yoga course has been created with id: " + courseId,
-                            Toast.LENGTH_LONG
-                    ).show();
-                    setBackToCourse();
-                })
-                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
-                .show();
+        FirebaseYogaCourse firebaseYogaCourse = new FirebaseYogaCourse();
+        firebaseYogaCourse.id = yogaCourse.id.toString();
+        firebaseYogaCourse.dayOfTheWeek = yogaCourse.day_of_the_week;
+        firebaseYogaCourse.timeOfCourse = yogaCourse.time_of_course;
+        firebaseYogaCourse.capacity = yogaCourse.capacity + " persons";
+        firebaseYogaCourse.duration = yogaCourse.duration;
+        firebaseYogaCourse.pricePerClass = yogaCourse.price_per_class;
+        firebaseYogaCourse.typeOfClass = selectedTypeOfClass;
+        firebaseYogaCourse.description = yogaCourse.description;
+
+        YogaFirebaseDbUtils.firebaseYogaCourses.add(firebaseYogaCourse);
+
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            YogaFirebaseDbUtils.syncYogaCoursesToFirebaseDb();
+        } else {
+            System.out.println("No network connection. Sync canceled.");
+        }
     }
 }

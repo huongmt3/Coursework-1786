@@ -20,8 +20,10 @@ import androidx.room.Room;
 
 import com.example.coursework_1786.R;
 import com.example.coursework_1786.database.YogaDatabase;
+import com.example.coursework_1786.models.FirebaseYogaClass;
 import com.example.coursework_1786.models.YogaClass;
-import com.example.coursework_1786.models.YogaCourse;
+import com.example.coursework_1786.utils.NetworkUtils;
+import com.example.coursework_1786.utils.YogaFirebaseDbUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -124,6 +126,12 @@ public class EditYogaClassActivity extends AppCompatActivity {
         ).show();
 
         setBackToClasses();
+        YogaFirebaseDbUtils.deletedClassIds.add(yogaClass.id.toString());
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            YogaFirebaseDbUtils.syncYogaClassesToFirebaseDb();
+        } else {
+            System.out.println("No network connection. Sync canceled.");
+        }
     }
 
     private void updateYogaClass(long classId, long courseId){
@@ -159,7 +167,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
                     Toast.makeText(this, "Yoga class has been updated, id: " + classId,
                             Toast.LENGTH_LONG
                     ).show();
-                    setBackToClasses();
+                    syncToFirebaseDb(yogaClass);
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
@@ -218,5 +226,22 @@ public class EditYogaClassActivity extends AppCompatActivity {
         );
 
         datePickerDialog.show();
+    }
+
+    private void syncToFirebaseDb(YogaClass yogaClass){
+        FirebaseYogaClass firebaseYogaClass = new FirebaseYogaClass();
+        firebaseYogaClass.id = yogaClass.id.toString();
+        firebaseYogaClass.yogaCourseId = yogaClass.yoga_course_id.toString();
+        firebaseYogaClass.date = yogaClass.date;
+        firebaseYogaClass.teacher = yogaClass.teacher;
+        firebaseYogaClass.additionalComments = yogaClass.additional_comments;
+
+        YogaFirebaseDbUtils.firebaseYogaClasses.add(firebaseYogaClass);
+
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            YogaFirebaseDbUtils.syncYogaClassesToFirebaseDb();
+        } else {
+            System.out.println("No network connection. Sync canceled.");
+        }
     }
 }

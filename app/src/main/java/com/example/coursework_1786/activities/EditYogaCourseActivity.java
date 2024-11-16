@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,8 +23,11 @@ import androidx.room.Room;
 
 import com.example.coursework_1786.R;
 import com.example.coursework_1786.database.YogaDatabase;
+import com.example.coursework_1786.models.FirebaseYogaCourse;
 import com.example.coursework_1786.models.YogaClass;
 import com.example.coursework_1786.models.YogaCourse;
+import com.example.coursework_1786.utils.NetworkUtils;
+import com.example.coursework_1786.utils.YogaFirebaseDbUtils;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -185,7 +189,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
                     Toast.makeText(this, "Yoga course has been updated, id: " + yogaCourse.id,
                             Toast.LENGTH_LONG
                     ).show();
-                    setBackToCourse();
+                    syncToFirebaseDb(yogaCourse);
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
@@ -230,6 +234,12 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         ).show();
 
         setBackToCourse();
+        YogaFirebaseDbUtils.deletedCourseIds.add(yogaCourse.id.toString());
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            YogaFirebaseDbUtils.syncYogaCoursesToFirebaseDb();
+        } else {
+            System.out.println("No network connection. Sync canceled.");
+        }
     }
 
     private void navigateToClasses(Long courseId, String dayOfTheWeek){
@@ -246,5 +256,28 @@ public class EditYogaCourseActivity extends AppCompatActivity {
                 .setMessage("Cannot delete this course since there are still classes of it.")
                 .setNeutralButton("OK", (dialogInterface, i) -> {})
                 .show();
+    }
+
+    private void syncToFirebaseDb(YogaCourse yogaCourse){
+        RadioButton selectedRadioBtn = findViewById(yogaCourse.type_of_class);
+        String selectedTypeOfClass = selectedRadioBtn.getText().toString();
+
+        FirebaseYogaCourse firebaseYogaCourse = new FirebaseYogaCourse();
+        firebaseYogaCourse.id = yogaCourse.id.toString();
+        firebaseYogaCourse.dayOfTheWeek = yogaCourse.day_of_the_week;
+        firebaseYogaCourse.timeOfCourse = yogaCourse.time_of_course;
+        firebaseYogaCourse.capacity = yogaCourse.capacity + " persons";
+        firebaseYogaCourse.duration = yogaCourse.duration;
+        firebaseYogaCourse.pricePerClass = yogaCourse.price_per_class;
+        firebaseYogaCourse.typeOfClass = selectedTypeOfClass;
+        firebaseYogaCourse.description = yogaCourse.description;
+
+        YogaFirebaseDbUtils.firebaseYogaCourses.add(firebaseYogaCourse);
+
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            YogaFirebaseDbUtils.syncYogaCoursesToFirebaseDb();
+        } else {
+            System.out.println("No network connection. Sync canceled.");
+        }
     }
 }
