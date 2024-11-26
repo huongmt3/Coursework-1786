@@ -66,12 +66,12 @@ public class YogaClassFragment extends Fragment {
         Long courseId = requireActivity().getIntent().getLongExtra("course_id", 0L);
         if (hasCourseId){
             yogaClasses = yogaDatabase.yogaClassDao().getByYogaCourseId(courseId);
-            yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext(), courseId);
+            yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext(), courseId, yogaDatabase);
             System.out.println(courseId);
         }
         else {
             yogaClasses = yogaDatabase.yogaClassDao().getAll();
-            yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext());
+            yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext(), yogaDatabase);
         }
 
         recyclerView.setAdapter(yogaClassAdapter);
@@ -80,7 +80,7 @@ public class YogaClassFragment extends Fragment {
 
         refreshBtn.setOnClickListener(v -> {
             List<YogaClass> allYogaClasses = yogaDatabase.yogaClassDao().getAll();
-            yogaClassAdapter = new YogaClassAdapter(allYogaClasses, requireContext());
+            yogaClassAdapter = new YogaClassAdapter(allYogaClasses, requireContext(), yogaDatabase);
             recyclerView.setAdapter(yogaClassAdapter);
             clearCourseIdIntent();
             navigateCreateClass.setEnabled(false);
@@ -88,7 +88,7 @@ public class YogaClassFragment extends Fragment {
 
         searchClassesBtn.setOnClickListener(v -> {
             List<YogaClass> searchedYogaClasses = searchYogaClasses();
-            yogaClassAdapter = new YogaClassAdapter(searchedYogaClasses, requireContext());
+            yogaClassAdapter = new YogaClassAdapter(searchedYogaClasses, requireContext(), yogaDatabase);
             recyclerView.setAdapter(yogaClassAdapter);
         });
 
@@ -99,6 +99,9 @@ public class YogaClassFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         clearCourseIdIntent();
+        if (yogaDatabase != null && yogaDatabase.isOpen()) {
+            yogaDatabase.close();
+        }
     }
 
     private void clearCourseIdIntent(){

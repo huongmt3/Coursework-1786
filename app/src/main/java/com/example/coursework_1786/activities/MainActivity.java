@@ -69,23 +69,23 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("target_fragment")) {
-            String targetFragment = intent.getStringExtra("target_fragment");
-
-            if ("YogaCourseFragment".equals(targetFragment)) {
-                binding.bottomNavigationView.setSelectedItemId(R.id.yogaCourse);
-                replaceFragment(new YogaCourseFragment());
-            } else if ("YogaClassFragment".equals(targetFragment)) {
-                binding.bottomNavigationView.setSelectedItemId(R.id.yogaClass);
-                replaceFragment(new YogaClassFragment());
-            }
-
-            intent.removeExtra("target_fragment");
-        }
-    }
+//    @Override
+//    protected void onResume(){
+//        super.onResume();
+//
+//        Intent intent = getIntent();
+//        if (intent != null && intent.hasExtra("target_fragment")) {
+//            String targetFragment = intent.getStringExtra("target_fragment");
+//
+//            if ("YogaCourseFragment".equals(targetFragment)) {
+//                binding.bottomNavigationView.setSelectedItemId(R.id.yogaCourse);
+//                replaceFragment(new YogaCourseFragment());
+//            } else if ("YogaClassFragment".equals(targetFragment)) {
+//                binding.bottomNavigationView.setSelectedItemId(R.id.yogaClass);
+//                replaceFragment(new YogaClassFragment());
+//            }
+//
+//            intent.removeExtra("target_fragment");
+//        }
+//    }
 }

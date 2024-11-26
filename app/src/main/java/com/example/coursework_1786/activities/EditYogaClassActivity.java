@@ -244,4 +244,12 @@ public class EditYogaClassActivity extends AppCompatActivity {
             System.out.println("No network connection. Sync canceled.");
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (yogaDatabase != null && yogaDatabase.isOpen()) {
+            yogaDatabase.close();
+        }
+    }
 }

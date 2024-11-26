@@ -25,15 +25,17 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
     Context context;
     long courseId;
 
-    public YogaClassAdapter(List<YogaClass> yogaClasses, Context context) {
+    public YogaClassAdapter(List<YogaClass> yogaClasses, Context context, YogaDatabase yogaDatabase) {
         this.yogaClasses = yogaClasses;
         this.context = context;
+        this.yogaDatabase = yogaDatabase;
     }
 
-    public YogaClassAdapter(List<YogaClass> yogaClasses, Context context, long courseId) {
+    public YogaClassAdapter(List<YogaClass> yogaClasses, Context context, long courseId, YogaDatabase yogaDatabase) {
         this.yogaClasses = yogaClasses;
         this.context = context;
         this.courseId = courseId;
+        this.yogaDatabase = yogaDatabase;
     }
 
     @NonNull

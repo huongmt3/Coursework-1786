@@ -12,18 +12,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coursework_1786.R;
 import com.example.coursework_1786.activities.EditYogaCourseActivity;
+import com.example.coursework_1786.database.YogaDatabase;
 import com.example.coursework_1786.models.YogaCourse;
 
 import java.util.List;
 
 public class YogaCourseAdapter extends RecyclerView.Adapter<YogaCourseAdapter.YogaCourseViewHolder> {
 
+    private YogaDatabase yogaDatabase;
     List<YogaCourse> yogaCourses;
     Context context;
 
-    public YogaCourseAdapter(List<YogaCourse> yogaCourses, Context context) {
+    public YogaCourseAdapter(List<YogaCourse> yogaCourses, Context context, YogaDatabase yogaDatabase) {
         this.yogaCourses = yogaCourses;
         this.context = context;
+        this.yogaDatabase = yogaDatabase;
     }
 
     @NonNull

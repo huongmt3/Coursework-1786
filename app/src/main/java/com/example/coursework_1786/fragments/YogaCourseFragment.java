@@ -55,9 +55,17 @@ public class YogaCourseFragment extends Fragment {
 
         List<YogaCourse> yogaCourses = yogaDatabase.yogaCourseDao().getAll();
 
-        adapter = new YogaCourseAdapter(yogaCourses, requireContext());
+        adapter = new YogaCourseAdapter(yogaCourses, requireContext(), yogaDatabase);
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (yogaDatabase != null && yogaDatabase.isOpen()) {
+            yogaDatabase.close();
+        }
     }
 }
