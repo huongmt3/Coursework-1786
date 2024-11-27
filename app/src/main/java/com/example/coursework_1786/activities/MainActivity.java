@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         replaceFragment(new YogaCourseFragment());
 
+        //Set up the bottom navigation menu
         binding.bottomNavigationView.setOnItemSelectedListener(item ->{
             switch (item.getItemId()){
                 case R.id.yogaCourse:
@@ -56,12 +57,14 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        //Set up Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
 
-        myRef.setValue("huhu");
+        myRef.setValue("testing");
     }
 
+    //Replace the current fragment in the frame layout
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -69,23 +72,25 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-//    @Override
-//    protected void onResume(){
-//        super.onResume();
-//
-//        Intent intent = getIntent();
-//        if (intent != null && intent.hasExtra("target_fragment")) {
-//            String targetFragment = intent.getStringExtra("target_fragment");
-//
-//            if ("YogaCourseFragment".equals(targetFragment)) {
-//                binding.bottomNavigationView.setSelectedItemId(R.id.yogaCourse);
-//                replaceFragment(new YogaCourseFragment());
-//            } else if ("YogaClassFragment".equals(targetFragment)) {
-//                binding.bottomNavigationView.setSelectedItemId(R.id.yogaClass);
-//                replaceFragment(new YogaClassFragment());
-//            }
-//
-//            intent.removeExtra("target_fragment");
-//        }
-//    }
+    //Called when the activity is resumed
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("target_fragment")) {
+            String targetFragment = intent.getStringExtra("target_fragment");
+
+            if ("YogaCourseFragment".equals(targetFragment)) {
+                binding.bottomNavigationView.setSelectedItemId(R.id.yogaCourse);
+                replaceFragment(new YogaCourseFragment());
+            } else if ("YogaClassFragment".equals(targetFragment)) {
+                binding.bottomNavigationView.setSelectedItemId(R.id.yogaClass);
+                replaceFragment(new YogaClassFragment());
+            }
+
+            //Remove the extra after handling it
+            intent.removeExtra("target_fragment");
+        }
+    }
 }
