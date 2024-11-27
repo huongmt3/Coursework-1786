@@ -23,7 +23,6 @@ import java.util.List;
 
 
 public class YogaCourseFragment extends Fragment {
-
     YogaDatabase yogaDatabase;
     RecyclerView recyclerView;
     YogaCourseAdapter adapter;
@@ -39,12 +38,14 @@ public class YogaCourseFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yoga_course, container, false);
 
+        //Set button action
         navigateCreateCourse = view.findViewById(R.id.navigateCreateCourse);
         navigateCreateCourse.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CreateYogaCourseActivity.class);
             startActivity(intent);
         });
 
+        //Initialise the database
         yogaDatabase = Room
                 .databaseBuilder(requireContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
@@ -61,6 +62,7 @@ public class YogaCourseFragment extends Fragment {
         return view;
     }
 
+    //Close database when activity is destroyed
     @Override
     public void onDestroyView() {
         super.onDestroyView();

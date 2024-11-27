@@ -62,11 +62,13 @@ public class EditYogaCourseActivity extends AppCompatActivity {
             return insets;
         });
 
+        //Initialise the database
         yogaDatabase = Room
                 .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
+        //Retrieve course details from Intent
         Intent intent = getIntent();
         long courseId = intent.getLongExtra("course_id", 0L);
         String dayOfTheWeek = intent.getStringExtra("day_of_the_week");
@@ -77,9 +79,11 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         int typeOfClass = intent.getIntExtra("type_of_class", 0);
         String description = intent.getStringExtra("description");
 
+        //Print the details for debugging
         System.out.printf("%d %s %s %d %s %s %d %s%n", courseId, dayOfTheWeek, timeOfCourse,
                 capacity, duration, pricePerClass, typeOfClass, description);
 
+        //Populate YogaCourse object with received details
         yogaCourse.id = courseId;
         yogaCourse.day_of_the_week = dayOfTheWeek;
         yogaCourse.time_of_course = timeOfCourse;
@@ -89,6 +93,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         yogaCourse.type_of_class = typeOfClass;
         yogaCourse.description = description;
 
+        //UI components
         daysOfTheWeekSpinner = findViewById(R.id.spinnerDayOfTheWeek);
         timeText = findViewById(R.id.labelDisplayDate);
         backToCourseBtn = findViewById(R.id.backToCourse);
@@ -103,6 +108,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         deleteCourseBtn = findViewById(R.id.btnDeleteCourse);
         viewClassesBtn = findViewById(R.id.btnViewClasses);
 
+        //Set initial values
         String[] daysOfTheWeek = getResources().getStringArray(R.array.daysOfTheWeek);
         int dayPosition = Arrays.asList(daysOfTheWeek).indexOf(dayOfTheWeek);
         daysOfTheWeekSpinner.setSelection(dayPosition);
@@ -114,6 +120,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         descriptionText.setText(description);
         typeOfClassRadio.check(typeOfClass);
 
+        //Set button actions
         backToCourseBtn.setOnClickListener(v -> setBackToCourse());
 
         pickTimeBtn.setOnClickListener(v -> showTimePickerDialog());
@@ -125,12 +132,14 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         viewClassesBtn.setOnClickListener(v -> navigateToClasses(courseId, dayOfTheWeek));
     }
 
+    //Go back to course
     private void setBackToCourse(){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("target_fragment", "YogaCourseFragment");
         startActivity(intent);
     }
 
+    //Show TimePicker to select date
     private void showTimePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -148,6 +157,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    //Save to Fỉebase
     private void saveYogaCourse(YogaCourse yogaCourse){
         String dayOfTheWeek = daysOfTheWeekSpinner.getSelectedItem().toString();
         String timeOfCourse = timeText.getText().toString();
@@ -157,13 +167,16 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         int typeOfClass = typeOfClassRadio.getCheckedRadioButtonId();
         String description = descriptionText.getText().toString().trim();
 
+        //Validation
         if (dayOfTheWeek.equals("Select day") || timeOfCourse.isEmpty() || capacity.isEmpty() ||
             duration.isEmpty() || pricePerClass.isEmpty() || typeOfClass == -1)
         {
+            //Show alert
             displayRequiredFieldsAlert();
             return;
         }
 
+        //Set values in yogaCourse object
         yogaCourse.day_of_the_week = dayOfTheWeek;
         yogaCourse.time_of_course = timeOfCourse;
         yogaCourse.capacity = Integer.parseInt(capacity);
@@ -172,6 +185,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         yogaCourse.type_of_class = typeOfClass;
         yogaCourse.description = description;
 
+        //Show dialog to confirm the information
         new AlertDialog.Builder(this)
                 .setTitle("Details Entered")
                 .setMessage(
@@ -183,18 +197,21 @@ public class EditYogaCourseActivity extends AppCompatActivity {
                         "Price per class: " + yogaCourse.price_per_class + "\n" +
                         "Description: " + yogaCourse.description
                 )
+                //Update to the database
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     yogaDatabase.yogaCourseDao().update(yogaCourse);
 
                     Toast.makeText(this, "Yoga course has been updated, id: " + yogaCourse.id,
                             Toast.LENGTH_LONG
                     ).show();
+                    //Firebase
                     syncToFirebaseDb(yogaCourse);
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 
+    //Show alert when data is missing
     private void displayRequiredFieldsAlert(){
         new AlertDialog.Builder(this)
                 .setTitle("Notification")
@@ -207,6 +224,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Delete confirm dialog
     private void displayConfirmDeleteAlert(Long courseId) {
         new AlertDialog.Builder(this)
                 .setTitle("Notification")
@@ -220,6 +238,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Delete course
     private void deleteYogaCourse(Long courseId){
         List<YogaClass> yogaClasses = yogaDatabase.yogaClassDao().getByYogaCourseId(courseId);
         if (!yogaClasses.isEmpty()){
@@ -227,13 +246,14 @@ public class EditYogaCourseActivity extends AppCompatActivity {
             return;
         }
 
+        //Delete and show Toast
         long deletedCourseId = yogaDatabase.yogaCourseDao().delete(yogaCourse);
-
         Toast.makeText(this, "Yoga course has been deleted, id: " + deletedCourseId,
                 Toast.LENGTH_LONG
         ).show();
 
         setBackToCourse();
+        //Add the course ID to deleted courses list
         YogaFirebaseDbUtils.deletedCourseIds.add(yogaCourse.id.toString());
         if (NetworkUtils.isNetworkAvailable(this)) {
             YogaFirebaseDbUtils.syncYogaCoursesToFirebaseDb();
@@ -242,6 +262,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         }
     }
 
+    //Navigate to the list of class in the course
     private void navigateToClasses(Long courseId, String dayOfTheWeek){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("target_fragment", "YogaClassFragment");
@@ -250,6 +271,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //Show alert
     private void displayCannotDeleteCourseAlert(){
         new AlertDialog.Builder(this)
                 .setTitle("Notification")
@@ -258,6 +280,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Sync to Firebase
     private void syncToFirebaseDb(YogaCourse yogaCourse){
         RadioButton selectedRadioBtn = findViewById(yogaCourse.type_of_class);
         String selectedTypeOfClass = selectedRadioBtn.getText().toString();
@@ -281,6 +304,7 @@ public class EditYogaCourseActivity extends AppCompatActivity {
         }
     }
 
+    //Close database when activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -18,11 +18,11 @@ import com.example.coursework_1786.models.YogaCourse;
 import java.util.List;
 
 public class YogaCourseAdapter extends RecyclerView.Adapter<YogaCourseAdapter.YogaCourseViewHolder> {
-
     private YogaDatabase yogaDatabase;
     List<YogaCourse> yogaCourses;
     Context context;
 
+    //Constructor
     public YogaCourseAdapter(List<YogaCourse> yogaCourses, Context context, YogaDatabase yogaDatabase) {
         this.yogaCourses = yogaCourses;
         this.context = context;
@@ -44,6 +44,7 @@ public class YogaCourseAdapter extends RecyclerView.Adapter<YogaCourseAdapter.Yo
         holder.courseDay.setText(yogaCourse.day_of_the_week);
         holder.courseTime.setText(yogaCourse.time_of_course);
 
+        //Handle click on course
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EditYogaCourseActivity.class);
             intent.putExtra("course_id", yogaCourse.id);

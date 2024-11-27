@@ -55,11 +55,13 @@ public class EditYogaClassActivity extends AppCompatActivity {
             return insets;
         });
 
+        //Initialise the database
         yogaDatabase = Room
                 .databaseBuilder(this, YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
+        //UI components
         backToClassBtn = findViewById(R.id.backToClass);
         pickDateBtn = findViewById(R.id.btnPickDate);
         dateText = findViewById(R.id.labelDisplayDate);
@@ -68,6 +70,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         submitUpdateClassBtn = findViewById(R.id.submitUpdateClass);
         deleteClassBtn = findViewById(R.id.btnDeleteClass);
 
+        // Get data passed from the previous activity
         Intent intent = getIntent();
         long classId = intent.getLongExtra("class_id", 0L);
         long courseId = intent.getLongExtra("course_id", 0L);
@@ -77,6 +80,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         String teacher = intent.getStringExtra("teacher");
         String comments = intent.getStringExtra("additional_comments");
 
+        //Populate YogaClass object with received details
         yogaClass.id = classId;
         yogaClass.yoga_course_id = courseId;
         yogaClass.date = date;
@@ -87,6 +91,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         teacherText.setText(teacher);
         commentsText.setText(comments);
 
+        //Set buttons action
         backToClassBtn.setOnClickListener(v -> setBackToClasses());
 
         pickDateBtn.setOnClickListener(v -> showDatePickerDialog(dayOfTheWeek));
@@ -96,6 +101,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         submitUpdateClassBtn.setOnClickListener(v -> updateYogaClass(classId, courseId));
     }
 
+    //Back to class list
     private void setBackToClasses(){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("target_fragment", "YogaClassFragment");
@@ -105,6 +111,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //Show delete confirm dialog
     private void displayConfirmDeleteAlert(){
         new AlertDialog.Builder(this)
                 .setTitle("Notification")
@@ -118,14 +125,16 @@ public class EditYogaClassActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Delete class
     private void deleteYogaClass(){
+        //Delete and show Toast
         long deletedClassId = yogaDatabase.yogaClassDao().delete(yogaClass);
-
         Toast.makeText(this, "Yoga class has been deleted, id: " + deletedClassId,
                 Toast.LENGTH_LONG
         ).show();
 
         setBackToClasses();
+        //Add class ID to deleted class list
         YogaFirebaseDbUtils.deletedClassIds.add(yogaClass.id.toString());
         if (NetworkUtils.isNetworkAvailable(this)) {
             YogaFirebaseDbUtils.syncYogaClassesToFirebaseDb();
@@ -134,20 +143,24 @@ public class EditYogaClassActivity extends AppCompatActivity {
         }
     }
 
+    //Update class
     private void updateYogaClass(long classId, long courseId){
         String date = dateText.getText().toString();
         String teacher = teacherText.getText().toString().trim();
         String comments = commentsText.getText().toString().trim();
 
+        //Check whether any fields is empty or not
         if (date.isEmpty() || teacher.isEmpty()){
             displayRequiredFieldsAlert();
             return;
         }
 
+        //Set values is YogaClass object
         yogaClass.date = date;
         yogaClass.teacher = teacher;
         yogaClass.additional_comments = comments;
 
+        //Show dialog to confirm the information
         new AlertDialog.Builder(this)
                 .setTitle("Details Entered")
                 .setMessage(
@@ -156,6 +169,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
                         "Teacher: " + teacher + "\n" +
                         "Additional comments: " + comments + "\n"
                 )
+                //Update to the database
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     YogaClass yogaClass = new YogaClass();
                     yogaClass.id = classId;
@@ -167,12 +181,14 @@ public class EditYogaClassActivity extends AppCompatActivity {
                     Toast.makeText(this, "Yoga class has been updated, id: " + classId,
                             Toast.LENGTH_LONG
                     ).show();
+                    //Firebase
                     syncToFirebaseDb(yogaClass);
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 
+    //Require user to input all needed information
     private void displayRequiredFieldsAlert(){
         new AlertDialog.Builder(this)
                 .setTitle("Notification")
@@ -181,6 +197,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Helper to convert day string to day of week in the calendar
     private static int getDayOfWeek(String dayString) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.ENGLISH);
@@ -197,6 +214,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         }
     }
 
+    //Show date picker
     private void showDatePickerDialog(String dayOfTheWeek) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -209,6 +227,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
                     Calendar selectedDate = Calendar.getInstance();
                     selectedDate.set(selectedYear, selectedMonth, selectedDay);
 
+                    //Check the day is true (in course) or not
                     if (selectedDate.get(Calendar.DAY_OF_WEEK) == getDayOfWeek(dayOfTheWeek)) {
                         String formattedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
                         dateText.setText(formattedDate);
@@ -228,6 +247,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    //Sync to Firebase
     private void syncToFirebaseDb(YogaClass yogaClass){
         FirebaseYogaClass firebaseYogaClass = new FirebaseYogaClass();
         firebaseYogaClass.id = yogaClass.id.toString();
@@ -245,6 +265,7 @@ public class EditYogaClassActivity extends AppCompatActivity {
         }
     }
 
+    //Close database when activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -252,4 +273,6 @@ public class EditYogaClassActivity extends AppCompatActivity {
             yogaDatabase.close();
         }
     }
+
+
 }

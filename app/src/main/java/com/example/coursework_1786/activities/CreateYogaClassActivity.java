@@ -52,17 +52,21 @@ public class CreateYogaClassActivity extends AppCompatActivity {
             return insets;
         });
 
+        //Initialise the database
         yogaDatabase = Room
                 .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
+        //Get course information from the previous activity
         Long courseId = getIntent().getLongExtra("course_id", 0L);
         String dayOfTheWeek = getIntent().getStringExtra("day_of_the_week");
 
+        //For debug
         System.out.println(courseId);
         System.out.println(dayOfTheWeek);
 
+        //UI components
         backToClassBtn = findViewById(R.id.backToClass);
         pickDateBtn = findViewById(R.id.btnPickDate);
         dateText = findViewById(R.id.labelDisplayDate);
@@ -70,6 +74,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         commentsText = findViewById(R.id.textComments);
         submitCreateClassBtn = findViewById(R.id.submitCreateClass);
 
+        //Set buttons action
         backToClassBtn.setOnClickListener(v -> setBackToClasses(courseId));
 
         pickDateBtn.setOnClickListener(v -> showDatePickerDialog(dayOfTheWeek));
@@ -77,6 +82,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         submitCreateClassBtn.setOnClickListener(v -> submitCreateYogaClass());
     }
 
+    //Back to class list
     private void setBackToClasses(long courseId){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("target_fragment", "YogaClassFragment");
@@ -84,6 +90,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //Show date picker
     private void showDatePickerDialog(String dayOfTheWeek) {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -115,6 +122,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    //Helper to convert day string to day of week in the calendar
     private static int getDayOfWeek(String dayString) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.ENGLISH);
@@ -131,10 +139,12 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         }
     }
 
+    //Add new class
     private void submitCreateYogaClass(){
         String date = dateText.getText().toString().trim();
         String teacher = teacherText.getText().toString().trim();
 
+        //Validation
         if (date.isEmpty() || teacher.isEmpty()){
             displayRequiredFieldsAlert();
             return;
@@ -142,6 +152,8 @@ public class CreateYogaClassActivity extends AppCompatActivity {
 
         String comments = commentsText.getText().toString().trim();
         long courseId = getIntent().getLongExtra("course_id", 0L);
+
+        //Show confirm dialog
         new AlertDialog.Builder(this)
                 .setTitle("Details Entered")
                 .setMessage(
@@ -150,6 +162,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
                         "Teacher: " + teacher + "\n" +
                         "Additional comments: " + comments + "\n"
                 )
+                //Update to the database
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     YogaClass yogaClass = new YogaClass();
                     yogaClass.yoga_course_id = courseId;
@@ -168,6 +181,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Show when user has not enter all the fields
     private void displayRequiredFieldsAlert(){
         new AlertDialog.Builder(this)
                 .setTitle("Notification")
@@ -176,6 +190,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Firebase
     private void syncToFirebaseDb(YogaClass yogaClass){
         FirebaseYogaClass firebaseYogaClass = new FirebaseYogaClass();
         firebaseYogaClass.id = yogaClass.id.toString();
@@ -193,6 +208,7 @@ public class CreateYogaClassActivity extends AppCompatActivity {
         }
     }
 
+    //Close database when activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();

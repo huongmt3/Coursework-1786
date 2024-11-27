@@ -25,7 +25,6 @@ import com.example.coursework_1786.models.YogaClass;
 import java.util.List;
 
 public class YogaClassFragment extends Fragment {
-
     YogaDatabase yogaDatabase;
     YogaClassAdapter yogaClassAdapter;
     RecyclerView recyclerView;
@@ -46,12 +45,14 @@ public class YogaClassFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_yoga_class, container, false);
 
+        //UI components
         navigateCreateClass = view.findViewById(R.id.navigateCreateClass);
         refreshBtn = view.findViewById(R.id.btnRefresh);
         searchText = view.findViewById(R.id.searchText);
         daySpinner = view.findViewById(R.id.daySpinner);
         searchClassesBtn = view.findViewById(R.id.btnSearchClass);
 
+        //Initialise database
         yogaDatabase = Room
                 .databaseBuilder(requireContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
@@ -62,22 +63,27 @@ public class YogaClassFragment extends Fragment {
 
         List<YogaClass> yogaClasses;
 
+        //Check whether a course ID has been passed in intent
         boolean hasCourseId = requireActivity().getIntent().hasExtra("course_id");
         Long courseId = requireActivity().getIntent().getLongExtra("course_id", 0L);
+        //Get yoga class(es) for that course
         if (hasCourseId){
             yogaClasses = yogaDatabase.yogaClassDao().getByYogaCourseId(courseId);
             yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext(), courseId, yogaDatabase);
             System.out.println(courseId);
         }
+        //Get all yoga classes
         else {
             yogaClasses = yogaDatabase.yogaClassDao().getAll();
             yogaClassAdapter = new YogaClassAdapter(yogaClasses, requireContext(), yogaDatabase);
         }
 
         recyclerView.setAdapter(yogaClassAdapter);
+        //Enable add class if the course ID has been passed and set button action
         navigateCreateClass.setEnabled(hasCourseId);
         navigateCreateClass.setOnClickListener(v -> setNavigateCreateClass(courseId));
 
+        //Set buttons action
         refreshBtn.setOnClickListener(v -> {
             List<YogaClass> allYogaClasses = yogaDatabase.yogaClassDao().getAll();
             yogaClassAdapter = new YogaClassAdapter(allYogaClasses, requireContext(), yogaDatabase);
@@ -95,6 +101,7 @@ public class YogaClassFragment extends Fragment {
         return view;
     }
 
+    //Close database when activity is destroyed
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -104,12 +111,14 @@ public class YogaClassFragment extends Fragment {
         }
     }
 
+    //Clear the course ID from the intent when it's no longer needed
     private void clearCourseIdIntent(){
         if (getActivity() != null) {
             getActivity().getIntent().removeExtra("course_id");
         }
     }
 
+    //Navigate to add class activity and pass the data
     private void setNavigateCreateClass(Long courseId){
         Intent intent = new Intent(getActivity(), CreateYogaClassActivity.class);
         String dayOfTheWeek = requireActivity().getIntent().getStringExtra("day_of_the_week");
@@ -120,6 +129,7 @@ public class YogaClassFragment extends Fragment {
         startActivity(intent);
     }
 
+    //Search based on teacher's name and date
     private List<YogaClass> searchYogaClasses(){
         String teacher = searchText.getText().toString().trim();
         String day = daySpinner.getSelectedItem().toString();

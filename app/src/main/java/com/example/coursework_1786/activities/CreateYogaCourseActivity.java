@@ -48,16 +48,19 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
             return insets;
         });
 
+        //Initialise the database
         yogaDatabase = Room
                 .databaseBuilder(getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
                 .build();
 
+        //UI components
         backToCourse = findViewById(R.id.backToCourse);
         timeText = findViewById(R.id.labelDisplayDate);
         pickTimeBtn = findViewById(R.id.btnPickDate);
         submitCreateCourseBtn = findViewById(R.id.submitCreateClass);
 
+        //Set buttons action
         backToCourse.setOnClickListener(v -> setBackToCourse());
 
         pickTimeBtn.setOnClickListener(v -> showTimePickerDialog());
@@ -65,12 +68,14 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         submitCreateCourseBtn.setOnClickListener(v -> submitCreateCourse());
     }
 
+    //Navigate back to the course list
     private void setBackToCourse(){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("target_fragment", "YogaCourseFragment");
         startActivity(intent);
     }
 
+    //Show time picker
     private void showTimePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -88,6 +93,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    //add new course
     private void submitCreateCourse(){
         Spinner dayOfTheWeeksSpinner = findViewById(R.id.spinnerDayOfTheWeek);
         String selectedDay = dayOfTheWeeksSpinner.getSelectedItem().toString();
@@ -100,6 +106,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
 
         int selectedTypeOfClass = typeOfClassRadio.getCheckedRadioButtonId();
 
+        //Validation
         if (selectedDay.equals("Select day") || timeOfCourse.isEmpty() || capacityText.isEmpty() ||
             duration.isEmpty() || pricePerClass.isEmpty() || selectedTypeOfClass == -1){
             displayRequiredFieldsAlert();
@@ -108,6 +115,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
 
         int capacity = Integer.parseInt(capacityText);
 
+        //Create new YogaCourse object
         YogaCourse yogaCourse = new YogaCourse();
         yogaCourse.day_of_the_week = selectedDay;
         yogaCourse.time_of_course = timeOfCourse;
@@ -117,6 +125,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         yogaCourse.price_per_class = pricePerClass;
         yogaCourse.description = description;
 
+        //Show dialog to confirm information
         new AlertDialog.Builder(this)
                 .setTitle("Details Entered")
                 .setMessage(
@@ -128,6 +137,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
                         "Price per class: " + yogaCourse.price_per_class + "\n" +
                         "Description: " + yogaCourse.description
                 )
+                //Update to the database
                 .setPositiveButton("OK", (dialogInterface, i) -> {
                     long courseId = yogaDatabase.yogaCourseDao().create(yogaCourse);
                     yogaCourse.id = courseId;
@@ -141,6 +151,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Require user to enter all fields
     private void displayRequiredFieldsAlert(){
         new AlertDialog.Builder(this)
                 .setTitle("Notification")
@@ -153,6 +164,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
                 .show();
     }
 
+    //Firebase
     private void syncToFirebaseDb(YogaCourse yogaCourse){
         RadioButton selectedRadioBtn = findViewById(yogaCourse.type_of_class);
         String selectedTypeOfClass = selectedRadioBtn.getText().toString();
@@ -176,6 +188,7 @@ public class CreateYogaCourseActivity extends AppCompatActivity {
         }
     }
 
+    //Close database when activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();

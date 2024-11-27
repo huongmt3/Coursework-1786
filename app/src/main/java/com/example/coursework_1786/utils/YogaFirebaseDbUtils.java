@@ -13,15 +13,20 @@ import java.util.Iterator;
 import java.util.List;
 
 public class YogaFirebaseDbUtils {
+    //Initialise firebase instance and references
     static FirebaseDatabase firebaseDb = FirebaseDatabase.getInstance();
     static DatabaseReference yogaCoursesRef = firebaseDb.getReference("yoga_courses");
     static DatabaseReference yogaClassesRef = firebaseDb.getReference("yoga_classes");
+
+    //List to store data
     public static List<FirebaseYogaCourse> firebaseYogaCourses = new ArrayList<>();
     public static List<FirebaseYogaClass> firebaseYogaClasses = new ArrayList<>();
     public static List<String> deletedCourseIds = new ArrayList<>();
     public static List<String> deletedClassIds = new ArrayList<>();
 
+    //Sync course to firebase
     public static void syncYogaCoursesToFirebaseDb(){
+        //Check whether there are any new course to sync or not
         if (!firebaseYogaCourses.isEmpty()){
             Iterator<FirebaseYogaCourse> yogaCourseIterator = firebaseYogaCourses.iterator();
             while (yogaCourseIterator.hasNext()){
@@ -35,10 +40,12 @@ public class YogaFirebaseDbUtils {
                         System.out.println("Sync course failed, id: " + yogaCourse.id);
                     }
                 });
+                //Remove course from the list
                 yogaCourseIterator.remove();
             }
         }
 
+        //Check whether there are any deleted course to delete or not
         if (!deletedCourseIds.isEmpty()){
             Iterator<String> deletedCourseIdIterator = deletedCourseIds.iterator();
             while (deletedCourseIdIterator.hasNext()){
@@ -52,11 +59,13 @@ public class YogaFirebaseDbUtils {
                         System.out.println("Delete course failed, id: " + deletedCourseId);
                     }
                 });
+                //Remove course from the list
                 deletedCourseIdIterator.remove();
             }
         }
     }
 
+    //Helper to convert course to hashmap
     @NonNull
     private static HashMap<String, Object> getYogaCourseHashMap(FirebaseYogaCourse yogaCourse) {
         HashMap<String, Object> yogaCourseHarshMap = new HashMap<>();
@@ -70,7 +79,9 @@ public class YogaFirebaseDbUtils {
         return yogaCourseHarshMap;
     }
 
+    //Sync class to the firebase
     public static void syncYogaClassesToFirebaseDb(){
+        //Check whether there are any new class to sync or not
         if (!firebaseYogaClasses.isEmpty()){
             Iterator<FirebaseYogaClass> iterator = firebaseYogaClasses.iterator();
             while (iterator.hasNext()){
@@ -84,10 +95,12 @@ public class YogaFirebaseDbUtils {
                         System.out.println("Sync class failed, id: " + yogaClass.id);
                     }
                 });;
+                //Remove class from the list
                 iterator.remove();
             }
         }
 
+        //Check whether there are any deleted class to delete or not
         if (!deletedClassIds.isEmpty()){
             Iterator<String> deletedClassIdIterator = deletedClassIds.iterator();
             while (deletedClassIdIterator.hasNext()){
@@ -101,11 +114,13 @@ public class YogaFirebaseDbUtils {
                         System.out.println("Sync class failed, id: " + deletedClassId);
                     }
                 });
+                //Remove class from the list
                 deletedClassIdIterator.remove();
             }
         }
     }
 
+    //Helper to convert class to hashmap
     @NonNull
     private static HashMap<String, Object> getYogaClassHashMap(FirebaseYogaClass yogaClass) {
         HashMap<String, Object> yogaClassHarshMap = new HashMap<>();

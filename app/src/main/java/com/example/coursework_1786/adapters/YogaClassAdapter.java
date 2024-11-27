@@ -25,12 +25,14 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
     Context context;
     long courseId;
 
+    //Constructor without courseId
     public YogaClassAdapter(List<YogaClass> yogaClasses, Context context, YogaDatabase yogaDatabase) {
         this.yogaClasses = yogaClasses;
         this.context = context;
         this.yogaDatabase = yogaDatabase;
     }
 
+    //Constructor with courseId
     public YogaClassAdapter(List<YogaClass> yogaClasses, Context context, long courseId, YogaDatabase yogaDatabase) {
         this.yogaClasses = yogaClasses;
         this.context = context;
@@ -45,6 +47,7 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
                 .from(parent.getContext())
                 .inflate(R.layout.item_yoga_class, parent, false);
 
+        //Initialise the database
         yogaDatabase = Room
                 .databaseBuilder(context.getApplicationContext(), YogaDatabase.class, "yoga_database")
                 .allowMainThreadQueries()
@@ -55,12 +58,15 @@ public class YogaClassAdapter extends RecyclerView.Adapter<YogaClassAdapter.Yoga
 
     @Override
     public void onBindViewHolder(@NonNull YogaClassViewHolder holder, int position) {
+        //Get current yoga class
         YogaClass yogaClass = yogaClasses.get(position);
         holder.classDate.setText(yogaClass.date);
         holder.classTeacher.setText(yogaClass.teacher);
 
+        //Get information of the course associated with the class
         YogaCourse yogaCourse = yogaDatabase.yogaCourseDao().getById(yogaClass.yoga_course_id);
 
+        //Listener to open edit activity
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EditYogaClassActivity.class);
             intent.putExtra("class_id", yogaClass.id);
