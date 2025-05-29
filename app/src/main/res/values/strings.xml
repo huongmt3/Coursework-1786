@@ -1,3 +1,25 @@
 <resources>
-    <string name="app_name">Coursework-1786</string>
+    <string name="app_name">Universal Yoga</string>
+    <string-array name="daysOfTheWeek">
+        <item>Select day</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="label_day_of_the_week">Day of the week:<font color='#FF0000'>*</font></string>
+    <string name="label_time_of_course">Time of course:<font color='#FF0000'>*</font></string>
+    <string name="label_capacity">Capacity:<font color='#FF0000'>*</font></string>
+    <string name="label_duration">Duration:<font color='#FF0000'>*</font></string>
+    <string name="label_price_per_class">Price per class:<font color='#FF0000'>*</font></string>
+    <string name="label_type_of_class">Type of class:<font color='#FF0000'>*</font></string>
+    <string name="label_description">Description:</string>
+    <string name="label_date">Date:<font color='#FF0000'>*</font></string>
+    <string name="label_teacher">Teacher:<font color='#FF0000'>*</font></string>
+    <string name="label_additional_comments">Additional comments:</string>
 </resources>
